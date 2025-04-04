@@ -16,5 +16,12 @@ dependencies {
 
     implementation("org.apache.httpcomponents:httpclient:4.5.13")
 
+    implementation("io.jsonwebtoken:jjwt-api:0.11.2")
+    implementation("com.auth0:jwks-rsa:0.20.2")
+    implementation("javax.xml.bind:jaxb-api:2.4.0-b180830.0359")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.2")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.2")
+    implementation("org.apache.commons:commons-lang3:3.12.0")
+
     implementation(project(":storage:db-core"))
 }

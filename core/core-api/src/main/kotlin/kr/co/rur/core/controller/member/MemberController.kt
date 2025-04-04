@@ -22,6 +22,6 @@ class MemberController (
     @GetMapping("/login")
     fun login(loginRequest: LoginRequest) : ApiResponse<LoginResponse> {
         var response = memberService.login(loginRequest)
-        return ApiResponse.success(LoginResponse("hi", "bye"));
+        return ApiResponse.success(response);
     }
 }
