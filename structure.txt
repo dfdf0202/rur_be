@@ -1,0 +1,25 @@
+.
+├── HELP.md
+├── build.gradle.kts
+├── core
+│   ├── core-api
+│   │   ├── build.gradle.kts
+│   │   ├── core-api.iml
+│   │   └── src
+│   └── core.iml
+├── gradle
+│   └── wrapper
+│       ├── gradle-wrapper.jar
+│       └── gradle-wrapper.properties
+├── gradlew
+├── gradlew.bat
+├── settings.gradle.kts
+├── storage
+│   ├── db-core
+│   │   ├── build.gradle.kts
+│   │   ├── db-core.iml
+│   │   └── src
+│   └── storage.iml
+└── structure.txt
+
+9 directories, 14 files
