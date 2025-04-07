@@ -17,6 +17,8 @@ dependencies {
     kapt("com.querydsl:querydsl-apt:5.0.0:jakarta")
     implementation("com.zaxxer:HikariCP")
     implementation("com.mysql:mysql-connector-j:8.0.33")
+
+    implementation(project(":core:core-enum"))
 }
 
 allOpen {

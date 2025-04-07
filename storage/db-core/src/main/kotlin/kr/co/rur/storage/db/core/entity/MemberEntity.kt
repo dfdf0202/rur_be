@@ -11,4 +11,11 @@ class MemberEntity (
     @Column
     var snsId: String,
 
-) : BaseEntity()
+    @Column
+    var nickNm: String? = null,
+
+) : BaseEntity() {
+    fun updateNickNm(nickNm: String) {
+        this.nickNm = nickNm
+    }
+}
