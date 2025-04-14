@@ -2,6 +2,7 @@ package kr.co.rur.core.api.controller.member
 
 import kr.co.rur.core.api.controller.member.request.LoginRequest
 import kr.co.rur.core.api.controller.member.request.MemberGroupUpdateRequest
+import kr.co.rur.core.api.controller.member.response.GroupResponse
 import kr.co.rur.core.api.controller.member.response.LoginResponse
 import kr.co.rur.core.api.service.MemberService
 import kr.co.rur.core.api.support.response.ApiResponse
@@ -31,4 +32,12 @@ class MemberController (
         var response = memberService.updateMemberGroup(memberId, groupRequest)
         return ApiResponse.success(true)
     }
+
+    @GetMapping("/group")
+    fun getGroups() : ApiResponse<List<GroupResponse>>{
+        val memberId: Long? = RequestUtils.getId()
+        var response = memberService.findMemberGroups(memberId!!)
+        return ApiResponse.success(response)
+    }
+
 }

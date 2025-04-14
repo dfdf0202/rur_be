@@ -11,7 +11,7 @@ class BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private val id: Long? = null
+    private var id: Long? = null
 
     @CreationTimestamp
     @Column

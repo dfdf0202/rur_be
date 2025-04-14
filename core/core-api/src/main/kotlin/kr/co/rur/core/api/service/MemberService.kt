@@ -2,6 +2,7 @@ package kr.co.rur.core.api.service
 
 import kr.co.rur.core.api.controller.member.request.LoginRequest
 import kr.co.rur.core.api.controller.member.request.MemberGroupUpdateRequest
+import kr.co.rur.core.api.controller.member.response.GroupResponse
 import kr.co.rur.core.api.controller.member.response.LoginResponse
 import kr.co.rur.core.api.domain.auth.login.Member
 import kr.co.rur.core.api.service.oauth.JwtService
@@ -36,7 +37,7 @@ class MemberService(
     fun login(loginRequest: LoginRequest): LoginResponse {
 
         // sns id 가져오기
-        var snsId = kakaoSnsService.getSnsId(loginRequest)
+        val snsId = kakaoSnsService.getSnsId(loginRequest)
         println(snsId)
         // sns id 로 가입된 회원 찾기
         if (!StringUtils.hasLength(snsId)) {
@@ -46,22 +47,22 @@ class MemberService(
         var memberEntity = memberEntityRepository.findBySnsId(snsId)
 
         if (memberEntity == null) {
-            memberEntity = MemberEntity(snsId)
+            memberEntity = MemberEntity(snsId, null)
             memberEntityRepository.save(memberEntity)
         }
 
 
-        var isMemberGroup = memberGroupEntityRepository.findByMemberEntity(memberEntity).isNotEmpty()
-        var member = Member(memberEntity.getId(), isMemberGroup)
+        val isMemberGroup = memberGroupEntityRepository.findByMemberEntity(memberEntity).isNotEmpty()
+        val member = Member(memberEntity.getId(), isMemberGroup)
 
-        var authToken = jwtService.makeAccessToken(member)
+        val authToken = jwtService.makeAccessToken(member)
 
         return LoginResponse(memberEntity.getId()!!, isMemberGroup, authToken.accessToken!!, authToken.refreshToken!!)
     }
 
     @Transactional
     fun updateMemberGroup(memberId: Long?, groupRequest: MemberGroupUpdateRequest) {
-        var memberEntity = memberEntityRepository.findById(memberId!!)
+        val memberEntity = memberEntityRepository.findById(memberId!!)
             .orElseThrow { RuntimeException("Member entity not found") }
 
         memberEntity.updateNickNm(groupRequest.nickNm)
@@ -69,10 +70,28 @@ class MemberService(
 
         val groupId = redisHandler.get(groupRequest.code)?.toLong() ?: throw IllegalArgumentException("초대코드가 유효하지 않습니다.")
 
-        var groupEntity = groupInfoEntityRepository.findById(groupId)
+        val groupEntity = groupInfoEntityRepository.findById(groupId)
             .orElseThrow({throw IllegalArgumentException("초대코드가 유효하지 않습니다.")})
 
-        var memberGroupEntity = MemberGroupEntity(memberEntity, groupEntity, GroupRole.MEMBER)
+        val memberGroupEntity = MemberGroupEntity(memberEntity, groupEntity, GroupRole.MEMBER)
         memberGroupEntityRepository.save(memberGroupEntity)
+    }
+
+    fun findMemberGroups(memberId: Long): List<GroupResponse> {
+        val memberEntity = memberEntityRepository.findById(memberId)
+            .orElseThrow { RuntimeException("Member entity not found") }
+
+        val groupInfoEntity = memberGroupEntityRepository.findByMemberEntity(memberEntity)
+
+        return groupInfoEntity.map {
+            var groupEntity = groupInfoEntityRepository.findById(it.groupEntity.getId()!!)
+                .orElseThrow { RuntimeException("Group entity not found") }
+
+            GroupResponse(
+                it.getId(),
+                groupEntity.name,
+                it.role
+            )
+        }
     }
 }
